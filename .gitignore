@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.pyc
+
+# Virtuele omgeving
+.venv/
+venv/
+
+# Logbestanden
+logs/*.log
+
+# Tijdelijke bestanden
+*.tmp
+*.bak
+
+# VS Code
+.vscode/
+
+# Excel tijdelijke bestanden
+~$*.xlsx
+
+# Backups
+backup/
+
+# Python cache
+.pytest_cache/
