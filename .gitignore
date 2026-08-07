@@ -24,3 +24,6 @@ backup/
 
 # Python cache
 .pytest_cache/
+
+# Testbestanden
+transacties.csv
