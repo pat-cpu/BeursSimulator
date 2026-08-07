@@ -14,3 +14,9 @@ Eigen beurssimulator ontwikkeld in Python.
 
 Auteur:
 Patrick Geys
+
+
+
+git add .
+git commit -m "korte beschrijving"
+git push
