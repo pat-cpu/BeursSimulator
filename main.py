@@ -24,9 +24,34 @@ def main() -> None:
     logger.info("=" * 50)
     logger.info("Programma gestart")
 
+
     simulator = BeursSimulator()
 
+    try:
+        simulator.laad_transacties()
+
+        print("")
+        print(
+            "Bestaande transacties automatisch geladen."
+        )
+
+    except FileNotFoundError:
+
+        print("")
+        print(
+            "Geen bestaand transactiebestand gevonden."
+        )
+
+    except (OSError, ValueError) as fout:
+
+        print("")
+        print(
+            f"Fout bij automatisch laden: {fout}"
+        )
+
     while True:
+
+
 
         toon_menu()
 
@@ -195,11 +220,28 @@ def main() -> None:
                 print("")
                 print(
                     f"Fout bij laden: {fout}"
+
                 )
 
         elif keuze == "0":
 
+            try:
+                simulator.bewaar_transacties()
+
+                print("")
+                print(
+                    "Transacties automatisch opgeslagen."
+                )
+
+            except OSError as fout:
+
+                print("")
+                print(
+                    f"Fout bij automatisch bewaren: {fout}"
+                )
+
             break
+
 
         else:
 
