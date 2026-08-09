@@ -138,3 +138,16 @@ class BeursSimulator:
     def toon_transacties(self):
 
         self.transactieregister.print_overzicht()
+
+     # ==================================================
+    # BEWAREN
+    # ==================================================
+
+    def bewaar_transacties(
+        self,
+        bestandsnaam: str = "transacties.csv"
+    ) -> None:
+
+        self.transactieregister.export_csv(
+            bestandsnaam
+        )       

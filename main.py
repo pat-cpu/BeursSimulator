@@ -14,6 +14,7 @@ def toon_menu() -> None:
     print("3 - Transacties")
     print("4 - ETF kopen")
     print("5 - ETF verkopen")
+    print("6 - Transacties bewaren")
     print("0 - Stoppen")
 
 
@@ -56,9 +57,7 @@ def main() -> None:
             naam = input(
                 "Naam   : "
             ).strip()
-
        
-
             try:
                 aantal = float(
                     input("Aantal : ").replace(",", ".")
@@ -115,15 +114,30 @@ def main() -> None:
             ).strip().upper()
 
             try:
-
                 aantal = float(
                     input("Aantal : ").replace(",", ".")
                 )
 
+            except ValueError:
+                print("")
+                print(
+                    "Fout: Aantal moet een getal zijn."
+                )
+                continue
+
+            try:
                 koers = float(
                     input("Koers  : ").replace(",", ".")
                 )
 
+            except ValueError:
+                print("")
+                print(
+                    "Fout: Koers moet een getal zijn."
+                )
+                continue
+
+            try:
                 simulator.verkoop(
                     ticker=ticker,
                     aantal=aantal,
@@ -137,32 +151,43 @@ def main() -> None:
                 )
 
             except ValueError as fout:
-
                 print("")
                 print(
                     f"Fout: {fout}"
-                )                
+                )    
+
+        elif keuze == "6":
+
+            try:
+                simulator.bewaar_transacties()
+
+                print("")
+                print(
+                    "Transacties opgeslagen in transacties.csv"
+                )
+
+            except OSError as fout:
+
+                print("")
+                print(
+                    f"Fout bij bewaren: {fout}"
+                )
 
 
-
-
+              
 
         elif keuze == "0":
 
-                logger.info(
-                    "Programma beëindigd"
-                )
-
-                break
+            break
 
         else:
 
             print("")
             print("Ongeldige keuze.")
 
-            logger.info(
-                "Programma beëindigd"
-            )
+    logger.info(
+        "Programma beëindigd"
+    )
 
 
 if __name__ == "__main__":
