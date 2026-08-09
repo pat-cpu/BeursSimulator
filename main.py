@@ -57,16 +57,31 @@ def main() -> None:
                 "Naam   : "
             ).strip()
 
-            try:
+       
 
+            try:
                 aantal = float(
                     input("Aantal : ").replace(",", ".")
                 )
+            except ValueError:
+                print("")
+                print(
+                    "Fout: Aantal moet een getal zijn."
+                )
+                continue
 
+            try:
                 koers = float(
                     input("Koers  : ").replace(",", ".")
                 )
+            except ValueError:
+                print("")
+                print(
+                    "Fout: Koers moet een getal zijn."
+                )
+                continue
 
+            try:
                 etf = ETF(
                     ticker,
                     naam
@@ -85,7 +100,6 @@ def main() -> None:
                 )
 
             except ValueError as fout:
-
                 print("")
                 print(
                     f"Fout: {fout}"
