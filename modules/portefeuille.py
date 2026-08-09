@@ -126,7 +126,8 @@ class Portefeuille:
         self,
         positie,
         aantal: float,
-        koers: float
+        koers: float,
+        registreer: bool = True
     ) -> None:
         """
         Koopt een positie en boekt de benodigde cash af.
@@ -174,17 +175,20 @@ class Portefeuille:
                 aantal,
                 koers
             )
-        transactie = Transactie(
-            soort="KOOP",
-            ticker=positie.ticker,
-            naam=positie.naam,
-            aantal=aantal,
-            koers=koers
-        )
 
-        self.transactieregister.voeg_toe(
-            transactie
-        )
+        if registreer:
+
+            transactie = Transactie(
+                soort="KOOP",
+                ticker=positie.ticker,
+                naam=positie.naam,
+                aantal=aantal,
+                koers=koers
+            )
+
+            self.transactieregister.voeg_toe(
+                transactie
+            )
 
         logger.info(
             "Aankoop verwerkt: %s %.2f stuks aan €%.2f",
@@ -201,7 +205,8 @@ class Portefeuille:
         self,
         ticker: str,
         aantal: float,
-        koers: float
+        koers: float,
+        registreer: bool = True
     ) -> None:
         """
         Verkoopt een aantal stuks van een bestaande positie
@@ -242,12 +247,14 @@ class Portefeuille:
             opbrengst
         )
 
-        transactie = Transactie(
-            soort="VERKOOP",
-            ticker=positie.ticker,
-            naam=positie.naam,
-            aantal=aantal,
-            koers=koers
+        if registreer:
+
+            transactie = Transactie(
+                soort="VERKOOP",
+                ticker=positie.ticker,
+                naam=positie.naam,
+                aantal=aantal,
+                koers=koers
         )
 
         self.transactieregister.voeg_toe(
@@ -303,21 +310,19 @@ class Portefeuille:
                         transactie.naam
                     )
 
-                self.koop(
-                    positie=positie,
-                    aantal=transactie.aantal,
-                    koers=transactie.koers
-                )
+                    self.koop(
+                        positie=positie,
+                        aantal=transactie.aantal,
+                        koers=transactie.koers,
+                        registreer=False
+                    )
 
-            elif transactie.soort == "VERKOOP":
-
-                self.verkoop(
-                    ticker=transactie.ticker,
-                    aantal=transactie.aantal,
-                    koers=transactie.koers
-                )
-
-
+            self.verkoop(
+                ticker=transactie.ticker,
+                aantal=transactie.aantal,
+                koers=transactie.koers,
+                registreer=False
+            )
 
 
     # ==================================================
