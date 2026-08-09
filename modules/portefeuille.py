@@ -329,6 +329,35 @@ class Portefeuille:
 
 
     # ==================================================
+    # KOERS BIJWERKEN
+    # ==================================================
+
+    def update_koers(
+        self,
+        ticker: str,
+        koers: float
+    ) -> None:
+
+        positie = self.zoek_positie(
+            ticker
+        )
+
+        if positie is None:
+            raise ValueError(
+                f"Positie {ticker.upper()} bestaat niet."
+            )
+
+        positie.update_koers(
+            koers
+        )
+
+        logger.info(
+            "Koers bijgewerkt: %s €%.2f",
+            ticker.upper(),
+            koers
+        )
+
+    # ==================================================
     # BEREKENINGEN
     # ==================================================
 

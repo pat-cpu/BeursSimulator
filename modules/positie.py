@@ -84,6 +84,20 @@ class Positie:
             self.gemiddelde_koers = 0.0
             self.huidige_koers = 0.0
 
+    def update_koers(
+        self,
+        koers: float
+    ) -> None:
+        """
+        Werkt de huidige koers van de positie bij.
+        """
+
+        if koers <= 0:
+            raise ValueError(
+                "Koers moet groter zijn dan nul."
+            )
+
+        self.huidige_koers = koers   
 
     @property
     def aankoopwaarde(self):

@@ -110,6 +110,22 @@ class BeursSimulator:
             koers=koers
         )
 
+# ==================================================
+# KOERS BIJWERKEN
+# ==================================================
+
+def update_koers(
+    self,
+    ticker: str,
+    koers: float
+) -> None:
+
+    self.portefeuille.update_koers(
+        ticker=ticker,
+        koers=koers
+    )
+
+
     # ==================================================
     # OVERZICHTEN
     # ==================================================
