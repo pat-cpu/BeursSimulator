@@ -30,6 +30,7 @@ def main() -> None:
 
     try:
         simulator.laad_transacties()
+        simulator.laad_koersen()
 
         print("")
         print(
@@ -268,39 +269,11 @@ def main() -> None:
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         elif keuze == "0":
 
             try:
                 simulator.bewaar_transacties()
+                simulator.bewaar_koersen()
 
                 print("")
                 print(

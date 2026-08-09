@@ -17,6 +17,8 @@ from modules.logger import logger
 from modules.portefeuille import Portefeuille
 from modules.transactieregister import TransactieRegister
 
+import csv
+
 
 class BeursSimulator:
 
@@ -141,28 +143,92 @@ class BeursSimulator:
             "Cash : €%.2f",
             self.portefeuille.cash
         )
+        
 
         for positie in self.portefeuille.posities.values():
 
+            logger.info("")
+
             logger.info(
-                "%-6s %8.2f stuks | Gem. €%.2f | Actueel €%.2f",
-                positie.ticker,
-                positie.aantal,
-                positie.gemiddelde_koers,
+                "%s",
+                positie.ticker
+            )
+
+            logger.info(
+                "  Aantal             : %.2f",
+                positie.aantal
+            )
+
+            logger.info(
+                "  Gem. aankoopkoers  : €%.2f",
+                positie.gemiddelde_koers
+            )
+
+            logger.info(
+                "  Actuele koers      : €%.2f",
                 positie.huidige_koers
             )
 
             logger.info(
-                "       Aankoopwaarde €%.2f | Actuele waarde €%.2f",
-                positie.aankoopwaarde,
-                positie.actuele_waarde
+                "  Winst/verlies      : €%.2f",
+                positie.winst
             )
 
             logger.info(
-                "       Winst/verlies €%.2f | Rendement %.2f%%",
-                positie.winst,
+                "  Rendement          : %.2f%%",
                 positie.rendement
             )
+
+            logger.info(
+                "--------------------------------------"
+            )
+
+            logger.info(
+                "Totale aankoopwaarde      : €%.2f",
+                self.portefeuille.totaal_aankoopwaarde()
+            )
+
+            logger.info(
+                "Totale actuele waarde     : €%.2f",
+                self.portefeuille.totale_actuele_waarde()
+            )
+
+            logger.info(
+                "Totale winst/verlies      : €%.2f",
+                self.portefeuille.totale_winst()
+            )
+
+            logger.info(
+                "Totale waarde incl. cash  : €%.2f",
+                self.portefeuille.totale_portefeuillewaarde()
+            )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -205,3 +271,79 @@ class BeursSimulator:
             "Portefeuille opnieuw opgebouwd uit %s",
             bestandsnaam
         )
+
+        # ==================================================
+        # KOERSEN BEWAREN
+        # ==================================================
+
+    def bewaar_koersen(
+                self,
+                bestandsnaam: str = "koersen.csv"
+            ) -> None:
+
+                with open(
+                    bestandsnaam,
+                    "w",
+                    newline="",
+                    encoding="utf-8-sig"
+                ) as csvfile:
+
+                    writer = csv.writer(
+                        csvfile,
+                        delimiter=";"
+                    )
+
+                    writer.writerow([
+                        "Ticker",
+                        "Koers"
+                    ])
+
+                    for positie in self.portefeuille.posities.values():
+
+                        writer.writerow([
+                            positie.ticker,
+                            positie.huidige_koers
+                        ])
+
+                logger.info(
+                    "Actuele koersen opgeslagen in %s",
+                    bestandsnaam
+                )  
+
+    # ==================================================
+    # KOERSEN LADEN
+    # ==================================================
+
+    def laad_koersen(
+        self,
+        bestandsnaam: str = "koersen.csv"
+    ) -> None:
+
+        with open(
+            bestandsnaam,
+            "r",
+            newline="",
+            encoding="utf-8-sig"
+        ) as csvfile:
+
+            reader = csv.DictReader(
+                csvfile,
+                delimiter=";"
+            )
+
+            for rij in reader:
+
+                ticker = rij["Ticker"]
+                koers = float(
+                    rij["Koers"]
+                )
+
+                self.portefeuille.update_koers(
+                    ticker=ticker,
+                    koers=koers
+                )
+
+        logger.info(
+            "Actuele koersen geladen uit %s",
+            bestandsnaam
+        )                  
