@@ -114,16 +114,16 @@ class BeursSimulator:
 # KOERS BIJWERKEN
 # ==================================================
 
-def update_koers(
-    self,
-    ticker: str,
-    koers: float
-) -> None:
+    def update_koers(
+        self,
+        ticker: str,
+        koers: float
+    ) -> None:
 
-    self.portefeuille.update_koers(
-        ticker=ticker,
-        koers=koers
-    )
+        self.portefeuille.update_koers(
+            ticker=ticker,
+            koers=koers
+        )
 
 
     # ==================================================
@@ -145,11 +145,27 @@ def update_koers(
         for positie in self.portefeuille.posities.values():
 
             logger.info(
-                "%-6s %8.2f stuks @ €%.2f",
+                "%-6s %8.2f stuks | Gem. €%.2f | Actueel €%.2f",
                 positie.ticker,
                 positie.aantal,
-                positie.gemiddelde_koers
+                positie.gemiddelde_koers,
+                positie.huidige_koers
             )
+
+            logger.info(
+                "       Aankoopwaarde €%.2f | Actuele waarde €%.2f",
+                positie.aankoopwaarde,
+                positie.actuele_waarde
+            )
+
+            logger.info(
+                "       Winst/verlies €%.2f | Rendement %.2f%%",
+                positie.winst,
+                positie.rendement
+            )
+
+
+
 
     def toon_transacties(self):
 

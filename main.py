@@ -16,6 +16,7 @@ def toon_menu() -> None:
     print("5 - ETF verkopen")
     print("6 - Transacties bewaren")
     print("7 - Transacties laden")
+    print("8 - Actuele koers invoeren")
     print("0 - Stoppen")
 
 
@@ -222,6 +223,79 @@ def main() -> None:
                     f"Fout bij laden: {fout}"
 
                 )
+
+
+        elif keuze == "8":
+
+            print("")
+            print("=== ACTUELE KOERS ===")
+
+            ticker = input(
+                "Ticker : "
+            ).strip().upper()
+
+            try:
+                koers = float(
+                    input("Koers  : ").replace(",", ".")
+                )
+
+            except ValueError:
+
+                print("")
+                print(
+                    "Fout: Koers moet een getal zijn."
+                )
+                continue
+
+            try:
+                simulator.update_koers(
+                    ticker=ticker,
+                    koers=koers
+                )
+
+                print("")
+                print(
+                    f"Actuele koers van {ticker} "
+                    f"ingesteld op €{koers:.2f}"
+                )
+
+            except ValueError as fout:
+
+                print("")
+                print(
+                    f"Fout: {fout}"
+                )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         elif keuze == "0":
 
