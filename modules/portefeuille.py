@@ -255,11 +255,11 @@ class Portefeuille:
                 naam=positie.naam,
                 aantal=aantal,
                 koers=koers
-        )
+            )
 
-        self.transactieregister.voeg_toe(
-            transactie
-        )
+            self.transactieregister.voeg_toe(
+                transactie
+            )
 
         if positie.aantal == 0:
             del self.posities[positie.ticker]
@@ -303,6 +303,7 @@ class Portefeuille:
                 )
 
                 if positie is None:
+
                     from modules.etf import ETF
 
                     positie = ETF(
@@ -310,19 +311,21 @@ class Portefeuille:
                         transactie.naam
                     )
 
-                    self.koop(
-                        positie=positie,
-                        aantal=transactie.aantal,
-                        koers=transactie.koers,
-                        registreer=False
-                    )
+                self.koop(
+                    positie=positie,
+                    aantal=transactie.aantal,
+                    koers=transactie.koers,
+                    registreer=False
+                )
 
-            self.verkoop(
-                ticker=transactie.ticker,
-                aantal=transactie.aantal,
-                koers=transactie.koers,
-                registreer=False
-            )
+            elif transactie.soort == "VERKOOP":
+
+                self.verkoop(
+                    ticker=transactie.ticker,
+                    aantal=transactie.aantal,
+                    koers=transactie.koers,
+                    registreer=False
+                )
 
 
     # ==================================================

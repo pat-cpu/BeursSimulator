@@ -15,6 +15,7 @@ def toon_menu() -> None:
     print("4 - ETF kopen")
     print("5 - ETF verkopen")
     print("6 - Transacties bewaren")
+    print("7 - Transacties laden")
     print("0 - Stoppen")
 
 
@@ -172,9 +173,29 @@ def main() -> None:
                 print(
                     f"Fout bij bewaren: {fout}"
                 )
+        elif keuze == "7":
 
+            try:
+                simulator.laad_transacties()
 
-              
+                print("")
+                print(
+                    "Transacties geladen uit transacties.csv"
+                )
+
+            except FileNotFoundError:
+
+                print("")
+                print(
+                    "Fout: transacties.csv bestaat niet."
+                )
+
+            except (OSError, ValueError) as fout:
+
+                print("")
+                print(
+                    f"Fout bij laden: {fout}"
+                )
 
         elif keuze == "0":
 

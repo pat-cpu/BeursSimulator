@@ -103,10 +103,20 @@ class TransactieRegister:
 
             for rij in reader:
 
-                datum = datetime.strptime(
-                    rij["Datum"],
-                    "%d/%m/%Y %H:%M:%S"
-                )
+
+                try:
+                    datum = datetime.strptime(
+                        rij["Datum"],
+                        "%d/%m/%Y %H:%M:%S"
+                    )
+
+                except ValueError:
+                    datum = datetime.strptime(
+                        rij["Datum"],
+                        "%d/%m/%Y %H:%M"
+                    )
+
+              
 
                 transactie = Transactie(
                     soort=rij["Soort"],

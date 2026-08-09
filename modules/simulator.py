@@ -151,3 +151,25 @@ class BeursSimulator:
         self.transactieregister.export_csv(
             bestandsnaam
         )       
+
+    # ==================================================
+    # LADEN
+    # ==================================================
+
+    def laad_transacties(
+        self,
+        bestandsnaam: str = "transacties.csv"
+    ) -> None:
+
+        self.transactieregister.import_csv(
+            bestandsnaam
+        )
+
+        self.portefeuille.opbouwen_uit_transacties(
+            self.transactieregister
+        )
+
+        logger.info(
+            "Portefeuille opnieuw opgebouwd uit %s",
+            bestandsnaam
+        )
