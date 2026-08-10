@@ -22,7 +22,8 @@ class Transactie:
         producttype: str = "ETF",
         turbo_soort: str = "",
         stoploss: float = 0.0,
-        hefboom: float = 0.0
+        hefboom: float = 0.0,
+        onderliggende_koers: float = 0.0
     ):
 
         if datum is None:
@@ -43,7 +44,9 @@ class Transactie:
         self.turbo_soort = turbo_soort.upper()
         self.stoploss = stoploss
         self.hefboom = hefboom
+        self.onderliggende_koers = onderliggende_koers
 
+        
     def __str__(self) -> str:
 
         return (

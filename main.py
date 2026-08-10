@@ -26,7 +26,7 @@ def toon_menu() -> None:
     print("13 - Simulator volledig resetten")
     print("14 - Turbo kopen")
     print("15 - Turbo verkopen")
-    
+    print("16 - Onderliggende koers Turbo wijzigen")
     print("0 - Stoppen")
 
 def main() -> None:
@@ -581,9 +581,16 @@ def main() -> None:
                 continue
 
             try:
+
                 stoploss = float(
                     input(
                         "Stoploss : "
+                    ).replace(",", ".")
+                )
+
+                onderliggende_koers = float(
+                    input(
+                        "Onderliggende koers : "
                     ).replace(",", ".")
                 )
 
@@ -619,6 +626,15 @@ def main() -> None:
                 print("")
                 print(
                     "Fout: Stoploss moet groter zijn dan nul."
+                )
+                continue
+
+            if onderliggende_koers <= 0:
+
+                print("")
+                print(
+                    "Fout: Onderliggende koers "
+                    "moet groter zijn dan nul."
                 )
                 continue
 
@@ -667,27 +683,18 @@ def main() -> None:
             print("")
             print("Controle aankoop")
             print("------------------------------")
-            print(f"Ticker       : {ticker}")
-            print(f"Naam         : {naam}")
-            print(f"Soort        : {soort}")
-            print(f"Stoploss     : {stoploss:.2f}")
-            print(f"Hefboom      : {hefboom:.2f}x")
-            print(f"Aantal       : {aantal:.2f}")
-            print(f"Turbo koers  : €{koers:.2f}")
-            print(f"Totaalbedrag : €{bedrag:.2f}")
-            print("")
-
-            bevestiging = input(
-                "Aankoop bevestigen (J/N)? "
-            ).strip().upper()
-
-            if bevestiging != "J":
-
-                print("")
-                print(
-                    "Aankoop geannuleerd."
-                )
-                continue
+            print(f"Ticker               : {ticker}")
+            print(f"Naam                 : {naam}")
+            print(f"Soort                : {soort}")
+            print(f"Stoploss             : {stoploss:.2f}")
+            print(
+                f"Onderliggende koers  : "
+                f"{onderliggende_koers:.2f}"
+            )
+            print(f"Hefboom              : {hefboom:.2f}x")
+            print(f"Aantal               : {aantal:.2f}")
+            print(f"Turbo koers          : €{koers:.2f}")
+            print(f"Totaalbedrag         : €{bedrag:.2f}")
 
             try:
 
@@ -696,8 +703,40 @@ def main() -> None:
                     naam=naam,
                     soort=soort,
                     stoploss=stoploss,
-                    hefboom=hefboom
+                    hefboom=hefboom,
+                    onderliggende_koers=onderliggende_koers
                 )
+
+                afstand = turbo.afstand_tot_stoploss()
+                risico = turbo.risicoklasse()
+
+                print("")
+                print("Risicoanalyse turbo")
+                print("------------------------------")
+                print(
+                    f"Afstand tot stoploss : {afstand:.2f}%"
+                )
+                print(
+                    f"Risicoklasse         : {risico}"
+                )
+
+                if risico == "HOOG RISICO":
+
+                    print(
+                        "WAARSCHUWING: deze turbo heeft een hoog risico."
+                    )
+
+                print("")
+
+                bevestiging = input(
+                    "Aankoop bevestigen (J/N)? "
+                ).strip().upper()
+
+                if bevestiging != "J":
+
+                    print("")
+                    print("Aankoop geannuleerd.")
+                    continue
 
                 simulator.koop(
                     positie=turbo,
@@ -722,64 +761,230 @@ def main() -> None:
                     f"Fout: {fout}"
                 )
 
+        ##################################
+        # Keuze 15
+        # TURBO VERKOPEN
+        ##################################
 
+        elif keuze == "15":
 
+            print("")
+            print("=== TURBO VERKOPEN ===")
 
+            ticker = input(
+                "Ticker : "
+            ).strip().upper()
 
+            positie = simulator.portefeuille.zoek_positie(
+                ticker
+            )
 
+            if positie is None:
 
+                print("")
+                print(
+                    f"Fout: Positie {ticker} bestaat niet."
+                )
+                continue
 
+            if positie.__class__.__name__ != "Turbo":
 
+                print("")
+                print(
+                    f"Fout: {ticker} is geen Turbo."
+                )
+                continue
 
+            print("")
+            print(
+                f"Beschikbaar: "
+                f"{positie.aantal:.2f} stuks {ticker}"
+            )
 
+            try:
 
+                aantal = float(
+                    input(
+                        "Aantal : "
+                    ).replace(",", ".")
+                )
 
+                koers = float(
+                    input(
+                        "Koers  : "
+                    ).replace(",", ".")
+                )
 
+            except ValueError:
 
+                print("")
+                print(
+                    "Fout: Aantal en koers moeten getallen zijn."
+                )
+                continue
 
+            if aantal <= 0:
 
+                print("")
+                print(
+                    "Fout: Aantal moet groter zijn dan nul."
+                )
+                continue
 
+            if koers <= 0:
 
+                print("")
+                print(
+                    "Fout: Koers moet groter zijn dan nul."
+                )
+                continue
 
+            if aantal > positie.aantal:
 
+                print("")
+                print(
+                    "Fout: Je kunt niet meer verkopen "
+                    "dan je bezit."
+                )
+                continue
 
+            opbrengst = aantal * koers
 
+            print("")
+            print("Controle verkoop")
+            print("------------------------------")
+            print(f"Ticker       : {ticker}")
+            print(f"Soort        : {positie.soort}")
+            print(f"Stoploss     : {positie.stoploss:.2f}")
+            print(f"Hefboom      : {positie.hefboom:.2f}x")
+            print(f"Aantal       : {aantal:.2f}")
+            print(f"Koers        : €{koers:.2f}")
+            print(f"Opbrengst    : €{opbrengst:.2f}")
+            print("")
 
+            bevestiging = input(
+                "Verkoop bevestigen (J/N)? "
+            ).strip().upper()
 
+            if bevestiging != "J":
 
+                print("")
+                print("Verkoop geannuleerd.")
+                continue
 
+            try:
 
+                simulator.verkoop(
+                    ticker=ticker,
+                    aantal=aantal,
+                    koers=koers
+                )
 
+                simulator.bewaar_transacties()
+                simulator.bewaar_koersen()
 
+                print("")
+                print(
+                    f"Turbo verkoop uitgevoerd: "
+                    f"{aantal:.2f} {ticker} "
+                    f"aan €{koers:.2f}"
+                )
 
+            except ValueError as fout:
 
+                print("")
+                print(
+                    f"Fout: {fout}"
+                )
 
+        ##################################
+        # Keuze 16
+        # ONDERLIGGENDE KOERS TURBO
+        ##################################
 
+        elif keuze == "16":
 
+            print("")
+            print("=== ONDERLIGGENDE KOERS TURBO ===")
 
+            ticker = input(
+                "Ticker : "
+            ).strip().upper()
 
+            positie = simulator.portefeuille.zoek_positie(
+                ticker
+            )
 
+            if positie is None:
 
+                print("")
+                print(
+                    f"Fout: Positie {ticker} bestaat niet."
+                )
+                continue
 
+            if positie.__class__.__name__ != "Turbo":
 
+                print("")
+                print(
+                    f"Fout: {ticker} is geen Turbo."
+                )
+                continue
 
+            print("")
+            print(
+                f"Huidige onderliggende koers : "
+                f"{positie.onderliggende_koers:.2f}"
+            )
 
+            print(
+                f"Stoploss                    : "
+                f"{positie.stoploss:.2f}"
+            )
 
+            try:
 
+                nieuwe_koers = float(
+                    input(
+                        "Nieuwe onderliggende koers : "
+                    ).replace(",", ".")
+                )
 
+            except ValueError:
 
+                print("")
+                print(
+                    "Fout: Koers moet een getal zijn."
+                )
+                continue
 
+            if nieuwe_koers <= 0:
 
+                print("")
+                print(
+                    "Fout: Koers moet groter zijn dan nul."
+                )
+                continue
 
+            positie.onderliggende_koers = nieuwe_koers
 
+            print("")
+            print(
+                f"Onderliggende koers van {ticker} "
+                f"ingesteld op {nieuwe_koers:.2f}"
+            )
 
+            print(
+                f"Afstand tot stoploss: "
+                f"{positie.afstand_tot_stoploss():.2f}%"
+            )
 
+            if positie.stoploss_waarschuwing():
 
-
-
-
-
-
+                print("")
+                print(
+                    "WAARSCHUWING: STOPLOSS DICHTBIJ!"
+                )
 
 
        ##################################

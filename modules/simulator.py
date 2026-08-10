@@ -136,7 +136,6 @@ class BeursSimulator:
 
         self.bewaar_historiek()
 
-
     # ==================================================
     # OVERZICHTEN
     # ==================================================
@@ -156,10 +155,21 @@ class BeursSimulator:
         for positie in self.portefeuille.posities.values():
 
             logger.info("")
-            logger.info(
-                "%s",
-                positie.ticker
-            )
+
+            if positie.__class__.__name__ == "Turbo":
+
+                logger.info(
+                    "%s — TURBO %s",
+                    positie.ticker,
+                    positie.soort
+                )
+
+            else:
+
+                logger.info(
+                    "%s — ETF",
+                    positie.ticker
+                )
 
             logger.info(
                 "  %-30s: %10.2f",
@@ -178,6 +188,53 @@ class BeursSimulator:
                 "Actuele koers",
                 positie.huidige_koers
             )
+
+            if positie.__class__.__name__ == "Turbo":
+
+                logger.info(
+                    "  %-30s: %10s",
+                    "Soort",
+                    positie.soort
+                )
+
+                logger.info(
+                    "  Onderliggende koers :           %10.2f",
+                    positie.onderliggende_koers
+                )
+                logger.info(
+                    "  %-30s: %10.2f",
+                    "Stoploss",
+                    positie.stoploss
+                )
+
+                logger.info(
+                    "  %-30s: %9.2fx",
+                    "Hefboom",
+                    positie.hefboom
+                )
+
+                afstand = positie.afstand_tot_stoploss()
+
+                logger.info(
+                    "  %-30s: %9.2f%%",
+                    "Afstand tot stoploss",
+                    afstand
+                )
+
+                risico = positie.risicoklasse()
+
+                logger.info(
+                    "  %-30s: %10s",
+                    "Risicoklasse",
+                    risico
+                )
+
+                if positie.stoploss_waarschuwing():
+
+                    logger.warning(
+                        "  WAARSCHUWING: STOPLOSS DICHTBIJ!"
+                    )
+
 
             logger.info(
                 "  %-30s: €%9.2f",
@@ -309,22 +366,28 @@ class BeursSimulator:
 
             writer.writerow([
                 "Ticker",
-                "Koers"
+                "Koers",
+                "OnderliggendeKoers"
             ])
 
             for ticker, positie in self.portefeuille.posities.items():
 
+                onderliggende_koers = getattr(
+                    positie,
+                    "onderliggende_koers",
+                    0.0
+                )
+
                 writer.writerow([
                     ticker,
-                    positie.huidige_koers
+                    positie.huidige_koers,
+                    onderliggende_koers
                 ])
 
         logger.info(
             "Koersen opgeslagen in %s",
             bestandsnaam
         )
-
-
     
     def bewaar_historiek(
         self,
@@ -523,12 +586,9 @@ class BeursSimulator:
         return historiek
 
 
-
     # ==================================================
     # GRAFIEK
     # ==================================================
-
-
 
     def toon_historiek_grafiek(self) -> None:
 
@@ -551,8 +611,6 @@ class BeursSimulator:
             regel["datum"]
             for regel in historiek
         ]
-
-
 
         totale_waarden = [
             regel["totale_waarde"]
@@ -622,8 +680,6 @@ class BeursSimulator:
 
         plt.show(block=False) 
         plt.pause(0.1)
-
-
 
     def toon_winst_verlies_grafiek(self) -> None:
 
@@ -766,31 +822,6 @@ class BeursSimulator:
         plt.show(block=False)
         plt.pause(0.1)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     # ==================================================
     # KOERSEN LADEN
     # ==================================================
@@ -815,14 +846,34 @@ class BeursSimulator:
             for rij in reader:
 
                 ticker = rij["Ticker"]
+
                 koers = float(
                     rij["Koers"]
+                )
+
+                onderliggende_koers = float(
+                    rij.get(
+                        "OnderliggendeKoers",
+                        0
+                    ) or 0
                 )
 
                 self.portefeuille.update_koers(
                     ticker=ticker,
                     koers=koers
                 )
+
+                positie = self.portefeuille.zoek_positie(
+                    ticker
+                )
+
+                if (
+                    positie is not None
+                    and positie.__class__.__name__ == "Turbo"
+                ):
+                    positie.onderliggende_koers = (
+                        onderliggende_koers
+                    )
 
         logger.info(
             "Actuele koersen geladen uit %s",

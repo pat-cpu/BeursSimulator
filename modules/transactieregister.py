@@ -56,7 +56,8 @@ class TransactieRegister:
                 "Producttype",
                 "TurboSoort",
                 "Stoploss",
-                "Hefboom"
+                "Hefboom",
+                "OnderliggendeKoers"
             ])
 
             for transactie in self.transacties:
@@ -74,7 +75,9 @@ class TransactieRegister:
                     transactie.producttype,
                     transactie.turbo_soort,
                     transactie.stoploss,
-                    transactie.hefboom
+                    transactie.hefboom,
+                    transactie.onderliggende_koers
+                    
                 ])
 
         logger.info(
@@ -146,6 +149,9 @@ class TransactieRegister:
                     ),
                     hefboom=float(
                         rij.get("Hefboom", 0) or 0
+                    ),
+                    onderliggende_koers=float(
+                        rij.get("OnderliggendeKoers", 0) or 0
                     )
                 )
 
@@ -158,8 +164,6 @@ class TransactieRegister:
             self.aantal(),
             bestandsnaam
         )
-
-
 
     # ==================================================
     # TOEVOEGEN

@@ -184,6 +184,7 @@ class Portefeuille:
                 turbo_soort = positie.soort
                 stoploss = positie.stoploss
                 hefboom = positie.hefboom
+                onderliggende_koers = positie.onderliggende_koers
 
             else:
 
@@ -191,6 +192,7 @@ class Portefeuille:
                 turbo_soort = ""
                 stoploss = 0.0
                 hefboom = 0.0
+                onderliggende_koers = 0.0
 
             transactie = Transactie(
                 soort="KOOP",
@@ -201,7 +203,8 @@ class Portefeuille:
                 producttype=producttype,
                 turbo_soort=turbo_soort,
                 stoploss=stoploss,
-                hefboom=hefboom
+                hefboom=hefboom,
+                onderliggende_koers=onderliggende_koers
             )
 
             self.transactieregister.voeg_toe(
@@ -282,7 +285,7 @@ class Portefeuille:
                 hefboom = 0.0
 
             transactie = Transactie(
-                soort="KOOP",
+                soort="VERKOOP",
                 ticker=positie.ticker,
                 naam=positie.naam,
                 aantal=aantal,
@@ -350,7 +353,8 @@ class Portefeuille:
                                 naam=transactie.naam,
                                 soort=transactie.turbo_soort,
                                 stoploss=transactie.stoploss,
-                                hefboom=transactie.hefboom
+                                hefboom=transactie.hefboom,
+                                onderliggende_koers=transactie.onderliggende_koers
                             )
 
                         else:
@@ -361,9 +365,6 @@ class Portefeuille:
                                 transactie.ticker,
                                 transactie.naam
                             )
-
-
-
 
                     self.koop(
                         positie=positie,

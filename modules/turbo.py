@@ -19,7 +19,8 @@ class Turbo(Positie):
         naam: str,
         soort: str,
         stoploss: float,
-        hefboom: float
+        hefboom: float,
+        onderliggende_koers: float = 0.0
     ):
 
         super().__init__(
@@ -47,31 +48,45 @@ class Turbo(Positie):
         self.soort = soort
         self.stoploss = stoploss
         self.hefboom = hefboom
+        self.onderliggende_koers = onderliggende_koers
 
     def afstand_tot_stoploss(self) -> float:
 
-        if self.huidige_koers <= 0:
+        if self.onderliggende_koers <= 0:
             return 0.0
 
         if self.soort == "LONG":
+
             return (
                 (
-                    self.huidige_koers
+                    self.onderliggende_koers
                     - self.stoploss
                 )
-                / self.huidige_koers
+                / self.onderliggende_koers
             ) * 100
 
         return (
             (
                 self.stoploss
-                - self.huidige_koers
+                - self.onderliggende_koers
             )
-            / self.huidige_koers
-        ) * 100       
+            / self.onderliggende_koers
+        ) * 100
 
     def stoploss_waarschuwing(self) -> bool:
 
         afstand = self.afstand_tot_stoploss()
 
-        return afstand <= 5  
+        return afstand <= 5
+
+    def risicoklasse(self) -> str:
+
+        afstand = self.afstand_tot_stoploss()
+
+        if afstand < 5:
+            return "HOOG RISICO"
+
+        if afstand <= 10:
+            return "OPGELET"
+
+        return "VEILIGER"
