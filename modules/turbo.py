@@ -45,6 +45,28 @@ class Turbo(Positie):
                 "Hefboom moet groter zijn dan nul."
             )
 
+
+        if onderliggende_koers > 0:
+
+            if (
+                soort == "LONG"
+                and stoploss >= onderliggende_koers
+            ):
+                raise ValueError(
+                    "Bij een Turbo LONG moet de stoploss "
+                    "lager zijn dan de onderliggende koers."
+                )
+
+            if (
+                soort == "SHORT"
+                and stoploss <= onderliggende_koers
+            ):
+                raise ValueError(
+                    "Bij een Turbo SHORT moet de stoploss "
+                    "hoger zijn dan de onderliggende koers."
+                )       
+    
+
         self.soort = soort
         self.stoploss = stoploss
         self.hefboom = hefboom
