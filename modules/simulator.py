@@ -17,8 +17,10 @@ from modules.logger import logger
 from modules.portefeuille import Portefeuille
 from modules.transactieregister import TransactieRegister
 
+import os
 import csv
-
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 from datetime import datetime
 
 
@@ -279,9 +281,9 @@ class BeursSimulator:
             bestandsnaam
         )
 
-        # ==================================================
-        # KOERSEN BEWAREN
-        # ==================================================
+    # ==================================================
+    # KOERSEN BEWAREN
+    # ==================================================
 
     def bewaar_koersen(
         self,
@@ -318,24 +320,86 @@ class BeursSimulator:
         )
 
 
-
+    
     def bewaar_historiek(
         self,
         bestandsnaam: str = "historiek.csv"
     ) -> None:
 
-        try:
+        bestand_bestaat = os.path.exists(
+            bestandsnaam
+        )
+
+        cash = self.portefeuille.cash
+
+        beleggingen = (
+            self.portefeuille.totale_actuele_waarde()
+        )
+
+        totale_waarde = (
+            self.portefeuille.totale_portefeuillewaarde()
+        )
+
+        winst_verlies = (
+            totale_waarde
+            - self.startkapitaal
+        )
+
+        rendement = (
+            self.portefeuille.totaal_rendement()
+        )
+
+        huidige_waarden = [
+            f"{cash:.2f}",
+            f"{beleggingen:.2f}",
+            f"{totale_waarde:.2f}",
+            f"{winst_verlies:.2f}",
+            f"{rendement:.2f}"
+        ]
+
+        # Controleer of de laatste historiekregel
+        # dezelfde portefeuillewaarden bevat.
+        if bestand_bestaat:
+
             with open(
                 bestandsnaam,
-                "x",
+                "r",
                 newline="",
                 encoding="utf-8-sig"
             ) as csvfile:
 
-                writer = csv.writer(
-                    csvfile,
-                    delimiter=";"
+                regels = list(
+                    csv.reader(
+                        csvfile,
+                        delimiter=";"
+                    )
                 )
+
+            if len(regels) > 1:
+
+                laatste_regel = regels[-1]
+
+                if laatste_regel[1:] == huidige_waarden:
+
+                    logger.info(
+                        "Historiek ongewijzigd: geen nieuwe regel toegevoegd."
+                    )
+
+                    return
+
+        with open(
+            bestandsnaam,
+            "a",
+            newline="",
+            encoding="utf-8-sig"
+        ) as csvfile:
+
+            writer = csv.writer(
+                csvfile,
+                delimiter=";"
+            )
+
+            if not bestand_bestaat:
 
                 writer.writerow([
                     "Datum",
@@ -346,13 +410,311 @@ class BeursSimulator:
                     "Rendement"
                 ])
 
-        except FileExistsError:
-            pass
+            writer.writerow([
+                datetime.now().strftime(
+                    "%d/%m/%Y %H:%M:%S"
+                ),
+                *huidige_waarden
+            ])
 
         logger.info(
-            "Historiekbestand gecontroleerd: %s",
+            "Historiek bijgewerkt: %s",
             bestandsnaam
         )
+
+
+    def laad_historiek(
+        self,
+        bestandsnaam: str = "historiek.csv"
+    ) -> list:
+
+        historiek = []
+
+        with open(
+            bestandsnaam,
+            "r",
+            newline="",
+            encoding="utf-8-sig"
+        ) as csvfile:
+
+            reader = csv.DictReader(
+                csvfile,
+                delimiter=";"
+            )
+
+            for rij in reader:
+
+                datum_tekst = rij["Datum"]
+
+                try:
+                    datum = datetime.strptime(
+                        datum_tekst,
+                        "%d/%m/%Y %H:%M:%S"
+                    )
+
+                except ValueError:
+                    datum = datetime.strptime(
+                        datum_tekst,
+                        "%d/%m/%Y %H:%M"
+                    )
+
+                historiek.append({
+                    "datum": datum,
+                    "cash": float(
+                        rij["Cash"]
+                    ),
+                    "beleggingen": float(
+                        rij["Beleggingen"]
+                    ),
+                    "totale_waarde": float(
+                        rij["Totale waarde"]
+                    ),
+                    "winst_verlies": float(
+                        rij["Winst/verlies"]
+                    ),
+                    "rendement": float(
+                        rij["Rendement"]
+                    )
+                })
+
+        logger.info(
+            "%d historiekregels geladen uit %s",
+            len(historiek),
+            bestandsnaam
+        )
+
+        return historiek
+
+    def toon_historiek(self) -> None:
+
+        try:
+            historiek = self.laad_historiek()
+
+        except FileNotFoundError as fout:
+
+            print("")
+            print(f"Historiekbestand niet gevonden: {fout}")
+            return
+
+        if not historiek:
+
+            print("")
+            print("Nog geen historiek beschikbaar.")
+            return
+
+        print("")
+        print("=== PORTEFEUILLEHISTORIEK ===")
+        print("")
+
+        for regel in historiek:
+
+            print(
+                regel["datum"].strftime("%d/%m/%Y %H:%M"),
+                f"| Totaal: €{regel['totale_waarde']:.2f}",
+                f"| W/V: €{regel['winst_verlies']:.2f}",
+                f"| Rendement: {regel['rendement']:.2f}%"
+            )
+
+        return historiek
+
+
+
+    # ==================================================
+    # GRAFIEK
+    # ==================================================
+
+
+
+    def toon_historiek_grafiek(self) -> None:
+
+        try:
+            historiek = self.laad_historiek()
+
+        except FileNotFoundError:
+
+            print("")
+            print("Nog geen historiek beschikbaar.")
+            return
+
+        if not historiek:
+
+            print("")
+            print("Nog geen historiek beschikbaar.")
+            return
+
+        datums = [
+            regel["datum"]
+            for regel in historiek
+        ]
+
+
+
+        totale_waarden = [
+            regel["totale_waarde"]
+            for regel in historiek
+        ]
+
+        cash_waarden = [
+            regel["cash"]
+            for regel in historiek
+        ]
+
+        beleggingen_waarden = [
+            regel["beleggingen"]
+            for regel in historiek
+        ]
+
+        plt.figure()
+
+        plt.plot(
+            datums,
+            totale_waarden,
+            marker="o",
+            label="Totale waarde"
+        )
+
+        plt.plot(
+            datums,
+            cash_waarden,
+            marker="o",
+            label="Cash"
+        )
+
+        plt.plot(
+            datums,
+            beleggingen_waarden,
+            marker="o",
+            label="Beleggingen"
+        )
+
+        plt.legend()
+
+
+        plt.title(
+            "Evolutie portefeuille"
+        )
+
+        plt.xlabel(
+            "Datum"
+        )
+
+        plt.ylabel(
+            "Totale waarde (€)"
+        )
+
+        plt.grid(
+            True
+        )
+
+        plt.gca().xaxis.set_major_formatter(
+            mdates.DateFormatter("%d/%m %H:%M")
+        )
+
+        plt.gcf().autofmt_xdate()
+
+
+        plt.tight_layout()
+
+        plt.show(block=False) 
+        plt.pause(0.1)
+
+
+
+    def toon_winst_verlies_grafiek(self) -> None:
+
+        try:
+            historiek = self.laad_historiek()
+
+        except FileNotFoundError:
+
+            print("")
+            print("Nog geen historiek beschikbaar.")
+            return
+
+        if not historiek:
+
+            print("")
+            print("Nog geen historiek beschikbaar.")
+            return
+
+        datums = [
+            regel["datum"]
+            for regel in historiek
+        ]
+
+        winst_verlies = [
+            regel["winst_verlies"]
+            for regel in historiek
+        ]
+
+        plt.figure()
+
+        plt.plot(
+            datums,
+            winst_verlies,
+            marker="o",
+            label="Winst/verlies"
+        )
+
+        plt.axhline(
+            y=0,
+            linestyle="--"
+        )
+
+        plt.title(
+            "Evolutie winst/verlies"
+        )
+
+        plt.xlabel(
+            "Datum"
+        )
+
+        plt.ylabel(
+            "Winst/verlies (€)"
+        )
+
+        plt.grid(
+            True
+        )
+
+        plt.legend()
+
+        plt.gca().xaxis.set_major_formatter(
+            mdates.DateFormatter("%d/%m %H:%M")
+        )
+
+        plt.gcf().autofmt_xdate()
+
+        plt.tight_layout()
+
+        plt.show(block=False)
+        plt.pause(0.1)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     # ==================================================
     # KOERSEN LADEN

@@ -17,6 +17,9 @@ def toon_menu() -> None:
     print("6 - Transacties bewaren")
     print("7 - Transacties laden")
     print("8 - Actuele koers invoeren")
+    print("9 - Historiek")
+    print("10 - Grafiek portefeuille")
+    print("11 - Grafiek winst/verlies")
     print("0 - Stoppen")
 
 
@@ -456,6 +459,31 @@ def main() -> None:
                 print(
                     f"Fout: {fout}"
                 )
+
+        ##################################
+        # Keuze 9
+        ##################################
+
+        elif keuze == "9":
+
+            simulator.toon_historiek()
+
+
+        ##################################
+        # Keuze 10
+        ##################################
+
+        elif keuze == "10":
+
+            simulator.toon_historiek_grafiek()
+
+        ##################################
+        # Keuze 11
+        ##################################
+
+        elif keuze == "11":
+            simulator.toon_winst_verlies_grafiek()
+
 
        ##################################
         # Keuze 0
