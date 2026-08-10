@@ -138,10 +138,44 @@ def main() -> None:
                 )
                 continue
 
+            if aantal <= 0:
+
+                print("")
+                print(
+                    "Fout: Aantal moet groter zijn dan nul."
+                )
+                continue
+
+            if koers <= 0:
+
+                print("")
+                print(
+                    "Fout: Koers moet groter zijn dan nul."
+                )
+                continue
+
             bedrag = aantal * koers
+
+            if bedrag > simulator.portefeuille.cash:
+
+                print("")
+                print(
+                    "Fout: Onvoldoende cash."
+                )
+
+                print(
+                    f"Beschikbaar : €{simulator.portefeuille.cash:.2f}"
+                )
+
+                print(
+                    f"Nodig       : €{bedrag:.2f}"
+                )
+
+                continue
 
             print("")
             print("Controle aankoop")
+
             print("------------------------------")
             print(f"Ticker       : {ticker}")
             print(f"Naam         : {naam}")
@@ -174,12 +208,15 @@ def main() -> None:
                     aantal=aantal,
                     koers=koers
                 )
-
+                simulator.bewaar_transacties()
+                simulator.bewaar_koersen()
+                
                 print("")
                 print(
                     f"Aankoop uitgevoerd: "
                     f"{aantal:.2f} {ticker} aan €{koers:.2f}"
                 )
+
 
             except ValueError as fout:
                 print("")
@@ -324,6 +361,8 @@ def main() -> None:
                     aantal=aantal,
                     koers=koers
                 )
+                simulator.bewaar_transacties()
+                simulator.bewaar_koersen()
 
                 print("")
                 print(
@@ -419,6 +458,8 @@ def main() -> None:
                     koers=koers
                 )
 
+                simulator.bewaar_koersen()
+                                
                 print("")
                 print(
                     f"Actuele koers van {ticker} "
