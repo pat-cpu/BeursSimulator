@@ -93,11 +93,13 @@ class BeursSimulator:
         koers: float
     ) -> None:
 
-        self.portefeuille.koop(
-            positie=positie,
-            aantal=aantal,
-            koers=koers
-        )
+            self.portefeuille.koop(
+                positie=positie,
+                aantal=aantal,
+                koers=koers
+            )
+
+            self.bewaar_historiek()
 
     # ==================================================
     # VERKOPEN
@@ -115,7 +117,8 @@ class BeursSimulator:
             aantal=aantal,
             koers=koers
         )
-
+        self.bewaar_historiek()
+        
 # ==================================================
 # KOERS BIJWERKEN
 # ==================================================
@@ -130,6 +133,8 @@ class BeursSimulator:
             ticker=ticker,
             koers=koers
         )
+
+        self.bewaar_historiek()
 
 
     # ==================================================
@@ -690,6 +695,76 @@ class BeursSimulator:
         plt.show(block=False)
         plt.pause(0.1)
 
+
+    def toon_rendement_grafiek(self) -> None:
+
+        try:
+            historiek = self.laad_historiek()
+
+        except FileNotFoundError:
+
+            print("")
+            print("Nog geen historiek beschikbaar.")
+            return
+
+        if not historiek:
+
+            print("")
+            print("Nog geen historiek beschikbaar.")
+            return
+
+        datums = [
+            regel["datum"]
+            for regel in historiek
+        ]
+
+        rendementen = [
+            regel["rendement"]
+            for regel in historiek
+        ]
+
+        plt.figure()
+
+        plt.plot(
+            datums,
+            rendementen,
+            marker="o",
+            label="Rendement"
+        )
+
+        plt.axhline(
+            y=0,
+            linestyle="--"
+        )
+
+        plt.title(
+            "Evolutie rendement"
+        )
+
+        plt.xlabel(
+            "Datum"
+        )
+
+        plt.ylabel(
+            "Rendement (%)"
+        )
+
+        plt.grid(
+            True
+        )
+
+        plt.legend()
+
+        plt.gca().xaxis.set_major_formatter(
+            mdates.DateFormatter("%d/%m %H:%M")
+        )
+
+        plt.gcf().autofmt_xdate()
+
+        plt.tight_layout()
+
+        plt.show(block=False)
+        plt.pause(0.1)
 
 
 

@@ -20,8 +20,8 @@ def toon_menu() -> None:
     print("9 - Historiek")
     print("10 - Grafiek portefeuille")
     print("11 - Grafiek winst/verlies")
+    print("12 - Grafiek rendement")
     print("0 - Stoppen")
-
 
 def main() -> None:
 
@@ -34,6 +34,7 @@ def main() -> None:
     try:
         simulator.laad_transacties()
         simulator.laad_koersen()
+        simulator.bewaar_historiek()
 
         print("")
         print(
@@ -484,6 +485,13 @@ def main() -> None:
         elif keuze == "11":
             simulator.toon_winst_verlies_grafiek()
 
+
+        ##################################
+        # Keuze 12
+        ##################################
+
+        elif keuze == "12":
+            simulator.toon_rendement_grafiek()
 
        ##################################
         # Keuze 0

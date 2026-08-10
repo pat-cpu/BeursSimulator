@@ -278,54 +278,62 @@ class Portefeuille:
 
 
 
-    # ==================================================
-    # OPBOUWEN UIT TRANSACTIES
-    # ==================================================
+   # ==================================================
+# OPBOUWEN UIT TRANSACTIES
+# ==================================================
 
-    def opbouwen_uit_transacties(
+        def opbouwen_uit_transacties(
         self,
         transactieregister
     ) -> None:
-        """
-        Bouwt de portefeuille opnieuw op
-        vanuit een transactieregister.
-        """
+            """
+            Bouwt de portefeuille opnieuw op
+            vanuit een transactieregister.
+            """
 
         self.cash = self.startkapitaal
         self.posities = {}
 
-        for transactie in transactieregister.transacties:
+        logging_was_disabled = logger.disabled
 
-            if transactie.soort == "KOOP":
+        try:
+            logger.disabled = True
 
-                positie = self.zoek_positie(
-                    transactie.ticker
-                )
+            for transactie in transactieregister.transacties:
 
-                if positie is None:
+                if transactie.soort == "KOOP":
 
-                    from modules.etf import ETF
-
-                    positie = ETF(
-                        transactie.ticker,
-                        transactie.naam
+                    positie = self.zoek_positie(
+                        transactie.ticker
                     )
 
-                self.koop(
-                    positie=positie,
-                    aantal=transactie.aantal,
-                    koers=transactie.koers,
-                    registreer=False
-                )
+                    if positie is None:
 
-            elif transactie.soort == "VERKOOP":
+                        from modules.etf import ETF
 
-                self.verkoop(
-                    ticker=transactie.ticker,
-                    aantal=transactie.aantal,
-                    koers=transactie.koers,
-                    registreer=False
-                )
+                        positie = ETF(
+                            transactie.ticker,
+                            transactie.naam
+                        )
+
+                    self.koop(
+                        positie=positie,
+                        aantal=transactie.aantal,
+                        koers=transactie.koers,
+                        registreer=False
+                    )
+
+                elif transactie.soort == "VERKOOP":
+
+                    self.verkoop(
+                        ticker=transactie.ticker,
+                        aantal=transactie.aantal,
+                        koers=transactie.koers,
+                        registreer=False
+                    )
+
+        finally:
+            logger.disabled = logging_was_disabled
 
 
     # ==================================================
@@ -356,7 +364,6 @@ class Portefeuille:
             ticker.upper(),
             koers
         )
-
     # ==================================================
     # BEREKENINGEN
     # ==================================================
