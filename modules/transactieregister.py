@@ -52,7 +52,11 @@ class TransactieRegister:
                 "Naam",
                 "Aantal",
                 "Koers",
-                "Bedrag"
+                "Bedrag",
+                "Producttype",
+                "TurboSoort",
+                "Stoploss",
+                "Hefboom"
             ])
 
             for transactie in self.transacties:
@@ -66,7 +70,11 @@ class TransactieRegister:
                     transactie.naam,
                     transactie.aantal,
                     transactie.koers,
-                    transactie.bedrag
+                    transactie.bedrag,
+                    transactie.producttype,
+                    transactie.turbo_soort,
+                    transactie.stoploss,
+                    transactie.hefboom
                 ])
 
         logger.info(
@@ -124,7 +132,21 @@ class TransactieRegister:
                     naam=rij["Naam"],
                     aantal=float(rij["Aantal"]),
                     koers=float(rij["Koers"]),
-                    datum=datum
+                    datum=datum,
+                    producttype=rij.get(
+                        "Producttype",
+                        "ETF"
+                    ) or "ETF",
+                    turbo_soort=rij.get(
+                        "TurboSoort",
+                        ""
+                    ) or "",
+                    stoploss=float(
+                        rij.get("Stoploss", 0) or 0
+                    ),
+                    hefboom=float(
+                        rij.get("Hefboom", 0) or 0
+                    )
                 )
 
                 self.transacties.append(

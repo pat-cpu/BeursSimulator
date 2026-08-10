@@ -1,6 +1,7 @@
 from modules.logger import logger
 from modules.simulator import BeursSimulator
 from modules.etf import ETF
+from modules.turbo import Turbo
 
 import os
 def toon_menu() -> None:
@@ -23,6 +24,9 @@ def toon_menu() -> None:
     print("11 - Grafiek winst/verlies")
     print("12 - Grafiek rendement")
     print("13 - Simulator volledig resetten")
+    print("14 - Turbo kopen")
+    print("15 - Turbo verkopen")
+    
     print("0 - Stoppen")
 
 def main() -> None:
@@ -495,9 +499,9 @@ def main() -> None:
         elif keuze == "12":
             simulator.toon_rendement_grafiek()
 
-    ##################################
-    # Keuze 13
-    ##################################
+        ##################################
+        # Keuze 13
+        ##################################
 
         elif keuze == "13":
 
@@ -533,6 +537,219 @@ def main() -> None:
             print("Simulator volledig gereset.")
             print("Start het programma opnieuw.")
             break
+
+        ##################################
+        # Keuze 14
+        # TURBO KOPEN
+        ##################################
+
+        elif keuze == "14":
+
+            print("")
+            print("=== TURBO KOPEN ===")
+
+            ticker = input(
+                "Ticker   : "
+            ).strip().upper()
+
+            if not ticker:
+
+                print("")
+                print("Fout: Ticker mag niet leeg zijn.")
+                continue
+
+            naam = input(
+                "Naam     : "
+            ).strip()
+
+            if not naam:
+
+                print("")
+                print("Fout: Naam mag niet leeg zijn.")
+                continue
+
+            soort = input(
+                "Soort (LONG/SHORT) : "
+            ).strip().upper()
+
+            if soort not in ("LONG", "SHORT"):
+
+                print("")
+                print(
+                    "Fout: Soort moet LONG of SHORT zijn."
+                )
+                continue
+
+            try:
+                stoploss = float(
+                    input(
+                        "Stoploss : "
+                    ).replace(",", ".")
+                )
+
+                hefboom = float(
+                    input(
+                        "Hefboom  : "
+                    ).replace(",", ".")
+                )
+
+                aantal = float(
+                    input(
+                        "Aantal   : "
+                    ).replace(",", ".")
+                )
+
+                koers = float(
+                    input(
+                        "Turbo koers : "
+                    ).replace(",", ".")
+                )
+
+            except ValueError:
+
+                print("")
+                print(
+                    "Fout: Stoploss, hefboom, aantal "
+                    "en koers moeten getallen zijn."
+                )
+                continue
+
+            if stoploss <= 0:
+
+                print("")
+                print(
+                    "Fout: Stoploss moet groter zijn dan nul."
+                )
+                continue
+
+            if hefboom <= 0:
+
+                print("")
+                print(
+                    "Fout: Hefboom moet groter zijn dan nul."
+                )
+                continue
+
+            if aantal <= 0:
+
+                print("")
+                print(
+                    "Fout: Aantal moet groter zijn dan nul."
+                )
+                continue
+
+            if koers <= 0:
+
+                print("")
+                print(
+                    "Fout: Turbo koers moet groter zijn dan nul."
+                )
+                continue
+
+            bedrag = aantal * koers
+
+            if bedrag > simulator.portefeuille.cash:
+
+                print("")
+                print("Fout: Onvoldoende cash.")
+
+                print(
+                    f"Beschikbaar : "
+                    f"€{simulator.portefeuille.cash:.2f}"
+                )
+
+                print(
+                    f"Nodig       : €{bedrag:.2f}"
+                )
+
+                continue
+
+            print("")
+            print("Controle aankoop")
+            print("------------------------------")
+            print(f"Ticker       : {ticker}")
+            print(f"Naam         : {naam}")
+            print(f"Soort        : {soort}")
+            print(f"Stoploss     : {stoploss:.2f}")
+            print(f"Hefboom      : {hefboom:.2f}x")
+            print(f"Aantal       : {aantal:.2f}")
+            print(f"Turbo koers  : €{koers:.2f}")
+            print(f"Totaalbedrag : €{bedrag:.2f}")
+            print("")
+
+            bevestiging = input(
+                "Aankoop bevestigen (J/N)? "
+            ).strip().upper()
+
+            if bevestiging != "J":
+
+                print("")
+                print(
+                    "Aankoop geannuleerd."
+                )
+                continue
+
+            try:
+
+                turbo = Turbo(
+                    ticker=ticker,
+                    naam=naam,
+                    soort=soort,
+                    stoploss=stoploss,
+                    hefboom=hefboom
+                )
+
+                simulator.koop(
+                    positie=turbo,
+                    aantal=aantal,
+                    koers=koers
+                )
+
+                simulator.bewaar_transacties()
+                simulator.bewaar_koersen()
+
+                print("")
+                print(
+                    f"Turbo aankoop uitgevoerd: "
+                    f"{aantal:.2f} {ticker} "
+                    f"aan €{koers:.2f}"
+                )
+
+            except ValueError as fout:
+
+                print("")
+                print(
+                    f"Fout: {fout}"
+                )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -178,12 +178,30 @@ class Portefeuille:
 
         if registreer:
 
+            if positie.__class__.__name__ == "Turbo":
+
+                producttype = "TURBO"
+                turbo_soort = positie.soort
+                stoploss = positie.stoploss
+                hefboom = positie.hefboom
+
+            else:
+
+                producttype = "ETF"
+                turbo_soort = ""
+                stoploss = 0.0
+                hefboom = 0.0
+
             transactie = Transactie(
                 soort="KOOP",
                 ticker=positie.ticker,
                 naam=positie.naam,
                 aantal=aantal,
-                koers=koers
+                koers=koers,
+                producttype=producttype,
+                turbo_soort=turbo_soort,
+                stoploss=stoploss,
+                hefboom=hefboom
             )
 
             self.transactieregister.voeg_toe(
@@ -249,12 +267,30 @@ class Portefeuille:
 
         if registreer:
 
+            if positie.__class__.__name__ == "Turbo":
+
+                producttype = "TURBO"
+                turbo_soort = positie.soort
+                stoploss = positie.stoploss
+                hefboom = positie.hefboom
+
+            else:
+
+                producttype = "ETF"
+                turbo_soort = ""
+                stoploss = 0.0
+                hefboom = 0.0
+
             transactie = Transactie(
-                soort="VERKOOP",
+                soort="KOOP",
                 ticker=positie.ticker,
                 naam=positie.naam,
                 aantal=aantal,
-                koers=koers
+                koers=koers,
+                producttype=producttype,
+                turbo_soort=turbo_soort,
+                stoploss=stoploss,
+                hefboom=hefboom
             )
 
             self.transactieregister.voeg_toe(
@@ -305,12 +341,29 @@ class Portefeuille:
 
                     if positie is None:
 
-                        from modules.etf import ETF
+                        if transactie.producttype == "TURBO":
 
-                        positie = ETF(
-                            transactie.ticker,
-                            transactie.naam
-                        )
+                            from modules.turbo import Turbo
+
+                            positie = Turbo(
+                                ticker=transactie.ticker,
+                                naam=transactie.naam,
+                                soort=transactie.turbo_soort,
+                                stoploss=transactie.stoploss,
+                                hefboom=transactie.hefboom
+                            )
+
+                        else:
+
+                            from modules.etf import ETF
+
+                            positie = ETF(
+                                transactie.ticker,
+                                transactie.naam
+                            )
+
+
+
 
                     self.koop(
                         positie=positie,
