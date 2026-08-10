@@ -2,6 +2,7 @@ from modules.logger import logger
 from modules.simulator import BeursSimulator
 from modules.etf import ETF
 
+import os
 def toon_menu() -> None:
 
     print("")
@@ -21,6 +22,7 @@ def toon_menu() -> None:
     print("10 - Grafiek portefeuille")
     print("11 - Grafiek winst/verlies")
     print("12 - Grafiek rendement")
+    print("13 - Simulator volledig resetten")
     print("0 - Stoppen")
 
 def main() -> None:
@@ -492,6 +494,76 @@ def main() -> None:
 
         elif keuze == "12":
             simulator.toon_rendement_grafiek()
+
+    ##################################
+    # Keuze 13
+    ##################################
+
+        elif keuze == "13":
+
+            print("")
+            print("=== SIMULATOR VOLLEDIG RESETTEN ===")
+            print("")
+            print("Waarschuwing: alle transacties, koersen")
+            print("en historiek worden verwijderd.")
+            print("")
+
+            bevestiging = input(
+                "Ben je zeker? Typ RESET om te bevestigen: "
+            ).strip().upper()
+
+            if bevestiging != "RESET":
+
+                print("")
+                print("Reset geannuleerd.")
+                continue
+
+            bestanden = [
+                "transacties.csv",
+                "koersen.csv",
+                "historiek.csv"
+            ]
+
+            for bestandsnaam in bestanden:
+
+                if os.path.exists(bestandsnaam):
+                    os.remove(bestandsnaam)
+
+            print("")
+            print("Simulator volledig gereset.")
+            print("Start het programma opnieuw.")
+            break
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
        ##################################
         # Keuze 0

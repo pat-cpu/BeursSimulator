@@ -15,7 +15,7 @@ from modules.transactieregister import TransactieRegister
 
 
 class Portefeuille:
-
+                            
     def __init__(
         self,
         startkapitaal: float,
@@ -278,18 +278,14 @@ class Portefeuille:
 
 
 
-   # ==================================================
-# OPBOUWEN UIT TRANSACTIES
-# ==================================================
+    # ==================================================
+    # OPBOUWEN UIT TRANSACTIES
+    # ==================================================
 
-        def opbouwen_uit_transacties(
+    def opbouwen_uit_transacties(
         self,
         transactieregister
     ) -> None:
-            """
-            Bouwt de portefeuille opnieuw op
-            vanuit een transactieregister.
-            """
 
         self.cash = self.startkapitaal
         self.posities = {}
