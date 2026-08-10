@@ -53,13 +53,15 @@ def main() -> None:
 
     while True:
 
-
-
         toon_menu()
 
         keuze = input(
             "\nKeuze : "
         ).strip()
+
+        ##################################
+        # Keuze 1
+        ##################################
 
         if keuze == "1":
 
@@ -72,7 +74,11 @@ def main() -> None:
         elif keuze == "3":
 
             simulator.toon_transacties()
-        
+
+        ##################################
+        # Keuze 4
+        ##################################
+
         elif keuze == "4":
 
             print("")
@@ -82,10 +88,34 @@ def main() -> None:
                 "Ticker : "
             ).strip().upper()
 
+            if not ticker:
+
+                print("")
+                print(
+                    "Fout: Ticker mag niet leeg zijn."
+                )
+                continue
+
+            if not ticker.isalpha():
+
+                print("")
+                print(
+                    "Fout: Ticker mag alleen letters bevatten."
+                )
+                continue
+
             naam = input(
                 "Naam   : "
             ).strip()
-       
+
+            if not naam:
+
+                print("")
+                print(
+                    "Fout: Naam mag niet leeg zijn."
+                )
+                continue
+
             try:
                 aantal = float(
                     input("Aantal : ").replace(",", ".")
@@ -106,6 +136,31 @@ def main() -> None:
                 print(
                     "Fout: Koers moet een getal zijn."
                 )
+                continue
+
+            bedrag = aantal * koers
+
+            print("")
+            print("Controle aankoop")
+            print("------------------------------")
+            print(f"Ticker       : {ticker}")
+            print(f"Naam         : {naam}")
+            print(f"Aantal       : {aantal:.2f}")
+            print(f"Koers        : €{koers:.2f}")
+            print(f"Totaalbedrag : €{bedrag:.2f}")
+            print("")
+
+            bevestiging = input(
+                "Aankoop bevestigen (J/N)? "
+            ).strip().upper()
+
+            if bevestiging != "J":
+
+                print("")
+                print(
+                    "Aankoop geannuleerd."
+                )
+
                 continue
 
             try:
@@ -132,6 +187,10 @@ def main() -> None:
                     f"Fout: {fout}"
                 )
 
+        ##################################
+        # Keuze 5
+        ##################################
+
         elif keuze == "5":
 
             print("")
@@ -141,17 +200,70 @@ def main() -> None:
                 "Ticker : "
             ).strip().upper()
 
+            if not ticker:
+
+                print("")
+                print(
+                    "Fout: Ticker mag niet leeg zijn."
+                )
+                continue
+
+            if not ticker.isalpha():
+
+                print("")
+                print(
+                    "Fout: Ticker mag alleen letters bevatten."
+                )
+                continue
+
+            positie = simulator.portefeuille.zoek_positie(
+                ticker
+            )
+
+            if positie is None:
+
+                print("")
+                print(
+                    f"Fout: Positie {ticker} bestaat niet."
+                )
+                continue
+
+            print("")
+            print(
+            f"Beschikbaar: {positie.aantal:.2f} stuks {ticker}"
+            )
+
             try:
                 aantal = float(
                     input("Aantal : ").replace(",", ".")
                 )
 
             except ValueError:
+
                 print("")
                 print(
                     "Fout: Aantal moet een getal zijn."
                 )
                 continue
+
+            # Controle aantal te verkopen stuks
+            if aantal <= 0:
+
+                print("")
+                print(
+                    "Fout: Aantal moet groter zijn dan nul."
+                )
+                continue
+
+            if aantal > positie.aantal:
+
+                print("")
+                print(
+                    f"Fout: Je hebt slechts "
+                    f"{positie.aantal:.2f} stuks {ticker}."
+                )
+                continue
+
 
             try:
                 koers = float(
@@ -159,10 +271,51 @@ def main() -> None:
                 )
 
             except ValueError:
+
                 print("")
                 print(
                     "Fout: Koers moet een getal zijn."
                 )
+                continue
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            bedrag = aantal * koers
+
+            print("")
+            print("Controle verkoop")
+            print("------------------------------")
+            print(f"Ticker       : {ticker}")
+            print(f"Aantal       : {aantal:.2f}")
+            print(f"Koers        : €{koers:.2f}")
+            print(f"Opbrengst    : €{bedrag:.2f}")
+            print("")
+
+            bevestiging = input(
+                "Verkoop bevestigen (J/N)? "
+            ).strip().upper()
+
+            if bevestiging != "J":
+
+                print("")
+                print(
+                    "Verkoop geannuleerd."
+                )
+
                 continue
 
             try:
@@ -182,7 +335,11 @@ def main() -> None:
                 print("")
                 print(
                     f"Fout: {fout}"
-                )    
+                )   
+
+        ##################################
+        # Keuze 6
+        ################################## 
 
         elif keuze == "6":
 
@@ -199,6 +356,11 @@ def main() -> None:
                 print("")
                 print(
                     f"Fout bij bewaren: {fout}"
+
+        ##################################
+        # Keuze 7
+        ##################################
+
                 )
         elif keuze == "7":
 
@@ -225,6 +387,9 @@ def main() -> None:
 
                 )
 
+        ##################################
+        # Keuze 8
+        ##################################
 
         elif keuze == "8":
 

@@ -23,7 +23,7 @@ import csv
 class BeursSimulator:
 
     def __init__(self):
-
+           
         logger.info(
             "BeursSimulator initialiseren..."
         )
@@ -78,7 +78,7 @@ class BeursSimulator:
             "============================"
         )
 
-            # ==================================================
+    # ==================================================
     # KOPEN
     # ==================================================
 
@@ -131,7 +131,7 @@ class BeursSimulator:
     # ==================================================
     # OVERZICHTEN
     # ==================================================
-
+    
     def toon_portefeuille(self):
 
         logger.info("")
@@ -229,27 +229,35 @@ class BeursSimulator:
             self.portefeuille.totaal_rendement()
         )
 
-        def toon_transacties(self):
-
+    def toon_transacties(self):
+    
+                self.transactieregister.print_overzicht()
+    
+            # ==================================================
+            # TRANSACTIES TONEN
+            # ==================================================
+    
+    def toon_transacties(self):
+        
             self.transactieregister.print_overzicht()
-
-        # ==================================================
-        # BEWAREN
-        # ==================================================
-
-        def bewaar_transacties(
-            self,
-            bestandsnaam: str = "transacties.csv"
-        ) -> None:
-
-            self.transactieregister.export_csv(
-                bestandsnaam
-            )       
+        
+                # ==================================================
+                # BEWAREN
+                # ==================================================
+        
+    def bewaar_transacties(
+                    self,
+                    bestandsnaam: str = "transacties.csv"
+                ) -> None:
+        
+                    self.transactieregister.export_csv(
+                        bestandsnaam
+                    )           
 
     # ==================================================
     # LADEN
     # ==================================================
-
+    
     def laad_transacties(
         self,
         bestandsnaam: str = "transacties.csv"
