@@ -19,6 +19,8 @@ from modules.transactieregister import TransactieRegister
 
 import csv
 
+from datetime import datetime
+
 
 class BeursSimulator:
 
@@ -253,6 +255,7 @@ class BeursSimulator:
                     self.transactieregister.export_csv(
                         bestandsnaam
                     )           
+    
 
     # ==================================================
     # LADEN
@@ -281,38 +284,75 @@ class BeursSimulator:
         # ==================================================
 
     def bewaar_koersen(
-                self,
-                bestandsnaam: str = "koersen.csv"
-            ) -> None:
+        self,
+        bestandsnaam: str = "koersen.csv"
+    ) -> None:
 
-                with open(
-                    bestandsnaam,
-                    "w",
-                    newline="",
-                    encoding="utf-8-sig"
-                ) as csvfile:
+        with open(
+            bestandsnaam,
+            "w",
+            newline="",
+            encoding="utf-8-sig"
+        ) as csvfile:
 
-                    writer = csv.writer(
-                        csvfile,
-                        delimiter=";"
-                    )
+            writer = csv.writer(
+                csvfile,
+                delimiter=";"
+            )
 
-                    writer.writerow([
-                        "Ticker",
-                        "Koers"
-                    ])
+            writer.writerow([
+                "Ticker",
+                "Koers"
+            ])
 
-                    for positie in self.portefeuille.posities.values():
+            for ticker, positie in self.portefeuille.posities.items():
 
-                        writer.writerow([
-                            positie.ticker,
-                            positie.huidige_koers
-                        ])
+                writer.writerow([
+                    ticker,
+                    positie.huidige_koers
+                ])
 
-                logger.info(
-                    "Actuele koersen opgeslagen in %s",
-                    bestandsnaam
-                )  
+        logger.info(
+            "Koersen opgeslagen in %s",
+            bestandsnaam
+        )
+
+
+
+    def bewaar_historiek(
+        self,
+        bestandsnaam: str = "historiek.csv"
+    ) -> None:
+
+        try:
+            with open(
+                bestandsnaam,
+                "x",
+                newline="",
+                encoding="utf-8-sig"
+            ) as csvfile:
+
+                writer = csv.writer(
+                    csvfile,
+                    delimiter=";"
+                )
+
+                writer.writerow([
+                    "Datum",
+                    "Cash",
+                    "Beleggingen",
+                    "Totale waarde",
+                    "Winst/verlies",
+                    "Rendement"
+                ])
+
+        except FileExistsError:
+            pass
+
+        logger.info(
+            "Historiekbestand gecontroleerd: %s",
+            bestandsnaam
+        )
 
     # ==================================================
     # KOERSEN LADEN

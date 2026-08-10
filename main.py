@@ -315,22 +315,6 @@ def main() -> None:
                 )
                 continue
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
             bedrag = aantal * koers
 
             print("")
@@ -473,13 +457,16 @@ def main() -> None:
                     f"Fout: {fout}"
                 )
 
-
+       ##################################
+        # Keuze 0
+       ##################################
 
         elif keuze == "0":
-
+        
             try:
                 simulator.bewaar_transacties()
                 simulator.bewaar_koersen()
+                simulator.bewaar_historiek()
 
                 print("")
                 print(
@@ -495,7 +482,6 @@ def main() -> None:
 
             break
 
-
         else:
 
             print("")
@@ -504,7 +490,6 @@ def main() -> None:
     logger.info(
         "Programma beëindigd"
     )
-
 
 if __name__ == "__main__":
     main()
