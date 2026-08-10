@@ -118,6 +118,39 @@ class BeursSimulator:
             koers=koers
         )
         self.bewaar_historiek()
+
+    def stoploss_turbo(
+        self,
+        ticker: str
+    ) -> None:
+
+        self.portefeuille.stoploss_turbo(
+            ticker=ticker
+        )
+
+        self.bewaar_historiek()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         
 # ==================================================
 # KOERS BIJWERKEN
@@ -212,8 +245,21 @@ class BeursSimulator:
                     "Hefboom",
                     positie.hefboom
                 )
-
                 afstand = positie.afstand_tot_stoploss()
+
+                if afstand <= 0:
+
+                    print("")
+                    print(
+                        "STOPLOSS BEREIKT: TURBO UITGESTOPT!"
+                    )
+
+                elif positie.stoploss_waarschuwing():
+
+                    print("")
+                    print(
+                        "WAARSCHUWING: STOPLOSS DICHTBIJ!"
+                    )
 
                 logger.info(
                     "  %-30s: %9.2f%%",
@@ -229,7 +275,13 @@ class BeursSimulator:
                     risico
                 )
 
-                if positie.stoploss_waarschuwing():
+                if afstand <= 0:
+
+                    logger.warning(
+                        "  STOPLOSS BEREIKT: TURBO UITGESTOPT!"
+                    )
+
+                elif positie.stoploss_waarschuwing():
 
                     logger.warning(
                         "  WAARSCHUWING: STOPLOSS DICHTBIJ!"

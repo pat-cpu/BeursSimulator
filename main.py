@@ -979,13 +979,32 @@ def main() -> None:
                 f"{positie.afstand_tot_stoploss():.2f}%"
             )
 
-            if positie.stoploss_waarschuwing():
+            afstand = positie.afstand_tot_stoploss()
+
+            if afstand <= 0:
+
+                print("")
+                print(
+                    "STOPLOSS BEREIKT: TURBO UITGESTOPT!"
+                )
+
+                simulator.stoploss_turbo(
+                    ticker=ticker
+                )
+
+                simulator.bewaar_transacties()
+
+                print(
+                    f"Turbo {ticker} is uit de "
+                    f"portefeuille verwijderd."
+                )
+
+            elif positie.stoploss_waarschuwing():
 
                 print("")
                 print(
                     "WAARSCHUWING: STOPLOSS DICHTBIJ!"
                 )
-
 
        ##################################
         # Keuze 0

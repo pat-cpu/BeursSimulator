@@ -315,6 +315,63 @@ class Portefeuille:
             koers
         )
 
+    def stoploss_turbo(
+        self,
+        ticker: str
+    ) -> None:
+        """
+        Verwijdert een Turbo die zijn stoploss
+        heeft bereikt of overschreden.
+
+        Voorlopig wordt de restwaarde op €0 gezet.
+        """
+
+        positie = self.zoek_positie(
+            ticker
+        )
+
+        if positie is None:
+            raise ValueError(
+                f"Positie {ticker.upper()} bestaat niet."
+            )
+
+        if positie.__class__.__name__ != "Turbo":
+            raise ValueError(
+                f"Positie {ticker.upper()} is geen Turbo."
+            )
+
+        aantal = positie.aantal
+
+        transactie = Transactie(
+            soort="STOPLOSS",
+            ticker=positie.ticker,
+            naam=positie.naam,
+            aantal=aantal,
+            koers=0.0,
+            producttype="TURBO",
+            turbo_soort=positie.soort,
+            stoploss=positie.stoploss,
+            hefboom=positie.hefboom,
+            onderliggende_koers=positie.onderliggende_koers
+        )
+
+        self.transactieregister.voeg_toe(
+            transactie
+        )
+
+        del self.posities[positie.ticker]
+
+        logger.info(
+            "Turbo uitgestopt en verwijderd: %s",
+            positie.ticker
+        )       
+
+
+
+
+
+
+
 
 
     # ==================================================
