@@ -140,115 +140,111 @@ class BeursSimulator:
         )
 
         logger.info(
-            "Cash : €%.2f",
+            "Cash                    : €%10.2f",
             self.portefeuille.cash
         )
-        
 
         for positie in self.portefeuille.posities.values():
 
             logger.info("")
-
             logger.info(
                 "%s",
                 positie.ticker
             )
 
             logger.info(
-                "  Aantal             : %.2f",
+                "  %-30s: %10.2f",
+                "Aantal",
                 positie.aantal
             )
 
             logger.info(
-                "  Gem. aankoopkoers  : €%.2f",
+                "  %-30s: €%9.2f",
+                "Gem. aankoopkoers",
                 positie.gemiddelde_koers
             )
 
             logger.info(
-                "  Actuele koers      : €%.2f",
+                "  %-30s: €%9.2f",
+                "Actuele koers",
                 positie.huidige_koers
             )
 
             logger.info(
-                "  Winst/verlies      : €%.2f",
+                "  %-30s: €%9.2f",
+                "Ongerealiseerd winst/verlies",
                 positie.winst
             )
 
             logger.info(
-                "  Rendement          : %.2f%%",
+                "  %-30s: %9.2f%%",
+                "Rendement",
                 positie.rendement
             )
 
-            logger.info(
-                "--------------------------------------"
-            )
+        logger.info(
+            "------------------------------------------"
+        )
 
-            logger.info(
-                "Totale aankoopwaarde      : €%.2f",
-                self.portefeuille.totaal_aankoopwaarde()
-            )
+        logger.info(
+            "%-30s: €%9.2f",
+            "Totale aankoopwaarde",
+            self.portefeuille.totaal_aankoopwaarde()
+        )
 
-            logger.info(
-                "Totale actuele waarde     : €%.2f",
-                self.portefeuille.totale_actuele_waarde()
-            )
+        logger.info(
+            "%-30s: €%9.2f",
+            "Totale actuele waarde",
+            self.portefeuille.totale_actuele_waarde()
+        )
 
-            logger.info(
-                "Totale winst/verlies      : €%.2f",
-                self.portefeuille.totale_winst()
-            )
+        logger.info(
+            "%-30s: €%9.2f",
+            "Ongerealiseerd winst/verlies",
+            self.portefeuille.totale_winst()
+        )
 
-            logger.info(
-                "Totale waarde incl. cash  : €%.2f",
-                self.portefeuille.totale_portefeuillewaarde()
-            )
+        logger.info(
+            "%-30s: €%9.2f",
+            "Gerealiseerde winst",
+            self.portefeuille.gerealiseerde_winst()
+        )
 
+        logger.info(
+            "%-30s: €%9.2f",
+            "Totale winst/verlies",
+            self.portefeuille.totale_portefeuillewaarde()
+            - self.portefeuille.startkapitaal
+        )
 
+        logger.info(
+            "%-30s: €%9.2f",
+            "Totale waarde incl. cash",
+            self.portefeuille.totale_portefeuillewaarde()
+        )
 
+        logger.info(
+            "%-30s: %9.2f%%",
+            "Totaal rendement",
+            self.portefeuille.totaal_rendement()
+        )
 
+        def toon_transacties(self):
 
+            self.transactieregister.print_overzicht()
 
+        # ==================================================
+        # BEWAREN
+        # ==================================================
 
+        def bewaar_transacties(
+            self,
+            bestandsnaam: str = "transacties.csv"
+        ) -> None:
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    def toon_transacties(self):
-
-        self.transactieregister.print_overzicht()
-
-     # ==================================================
-    # BEWAREN
-    # ==================================================
-
-    def bewaar_transacties(
-        self,
-        bestandsnaam: str = "transacties.csv"
-    ) -> None:
-
-        self.transactieregister.export_csv(
-            bestandsnaam
-        )       
+            self.transactieregister.export_csv(
+                bestandsnaam
+            )       
 
     # ==================================================
     # LADEN

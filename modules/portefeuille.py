@@ -392,3 +392,77 @@ class Portefeuille:
     def aantal_posities(self) -> int:
 
         return len(self.posities)
+
+    def totaal_rendement(self) -> float:
+
+        if self.startkapitaal == 0:
+            return 0.0
+
+        winst_verlies = (
+            self.totale_portefeuillewaarde()
+            - self.startkapitaal
+        )
+
+        return (
+            winst_verlies
+            / self.startkapitaal
+        ) * 100
+
+    def gerealiseerde_winst(self) -> float:
+
+        winst = 0.0
+        aantallen = {}
+        gemiddelde_koersen = {}
+
+        for transactie in self.transactieregister.transacties:
+
+            ticker = transactie.ticker
+
+            if transactie.soort == "KOOP":
+
+                oud_aantal = aantallen.get(
+                    ticker,
+                    0.0
+                )
+
+                oude_gemiddelde = gemiddelde_koersen.get(
+                    ticker,
+                    0.0
+                )
+
+                nieuw_aantal = (
+                    oud_aantal
+                    + transactie.aantal
+                )
+
+                gemiddelde_koersen[ticker] = (
+                    (
+                        oud_aantal * oude_gemiddelde
+                    )
+                    +
+                    (
+                        transactie.aantal
+                        * transactie.koers
+                    )
+                ) / nieuw_aantal
+
+                aantallen[ticker] = nieuw_aantal
+
+            elif transactie.soort == "VERKOOP":
+
+                gemiddelde = gemiddelde_koersen.get(
+                    ticker,
+                    0.0
+                )
+
+                winst += (
+                    transactie.koers
+                    - gemiddelde
+                ) * transactie.aantal
+
+                aantallen[ticker] = (
+                    aantallen.get(ticker, 0.0)
+                    - transactie.aantal
+                )
+
+        return winst   
