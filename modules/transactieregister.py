@@ -57,7 +57,11 @@ class TransactieRegister:
                 "TurboSoort",
                 "Stoploss",
                 "Hefboom",
-                "OnderliggendeKoers"
+                "OnderliggendeKoers",
+                "Reden",
+                "GemiddeldeAankoopkoers",
+                "Resultaat",
+                "ResultaatProcent"
             ])
 
             for transactie in self.transacties:
@@ -76,7 +80,11 @@ class TransactieRegister:
                     transactie.turbo_soort,
                     transactie.stoploss,
                     transactie.hefboom,
-                    transactie.onderliggende_koers
+                    transactie.onderliggende_koers,
+                    transactie.reden,
+                    transactie.gemiddelde_aankoopkoers,
+                    transactie.resultaat,
+                    transactie.resultaat_procent
                     
                 ])
 
@@ -150,9 +158,27 @@ class TransactieRegister:
                     hefboom=float(
                         rij.get("Hefboom", 0) or 0
                     ),
-                    onderliggende_koers=float(
+
+
+                     onderliggende_koers=float(
                         rij.get("OnderliggendeKoers", 0) or 0
+                    ),
+                    reden=rij.get(
+                        "Reden",
+                        ""
+                    ) or "",
+                    gemiddelde_aankoopkoers=float(
+                        rij.get("GemiddeldeAankoopkoers", 0) or 0
+                    ),
+                    resultaat=float(
+                        rij.get("Resultaat", 0) or 0
+                    ),
+                    resultaat_procent=float(
+                        rij.get("ResultaatProcent", 0) or 0
                     )
+
+
+
                 )
 
                 self.transacties.append(
@@ -217,3 +243,97 @@ class TransactieRegister:
             print(
                 transactie
             )
+
+    # ==================================================
+    # HANDELSLOGBOEK TURBO'S
+    # ==================================================
+      
+    def print_turbo_logboek(self) -> None:
+
+        turbo_transacties = [
+            transactie
+            for transactie in self.transacties
+            if transactie.producttype == "TURBO"
+        ]
+
+        print("")
+        print("=" * 70)
+        print("HANDELSLOGBOEK TURBO'S")
+        print("=" * 70)
+
+        if not turbo_transacties:
+
+            print("Geen turbo-transacties gevonden.")
+            return
+
+        totaal_resultaat = 0.0
+
+        for transactie in turbo_transacties:
+
+            print("")
+            print("-" * 70)
+
+            print(
+                f"Datum                : "
+                f"{transactie.datum:%d/%m/%Y %H:%M:%S}"
+            )
+
+            print(
+                f"Transactie           : "
+                f"{transactie.soort}"
+            )
+
+            print(
+                f"Turbo                : "
+                f"{transactie.ticker} — "
+                f"{transactie.turbo_soort}"
+            )
+
+            print(
+                f"Aantal               : "
+                f"{transactie.aantal:.2f}"
+            )
+
+            print(
+                f"Koers                : "
+                f"€{transactie.koers:.2f}"
+            )
+
+            print(
+                f"Reden                : "
+                f"{transactie.reden or '-'}"
+            )
+
+            if transactie.soort in (
+                "VERKOOP",
+                "STOPLOSS"
+            ):
+
+                print(
+                    f"Gem. aankoopkoers    : "
+                    f"€{transactie.gemiddelde_aankoopkoers:.2f}"
+                )
+
+                print(
+                    f"Resultaat            : "
+                    f"€{transactie.resultaat:+.2f}"
+                )
+
+                print(
+                    f"Resultaat procent    : "
+                    f"{transactie.resultaat_procent:+.2f}%"
+                )
+
+                totaal_resultaat += (
+                    transactie.resultaat
+                )
+
+        print("")
+        print("=" * 70)
+
+        print(
+            f"Totaal gerealiseerd resultaat : "
+            f"€{totaal_resultaat:+.2f}"
+        )
+
+        print("=" * 70)

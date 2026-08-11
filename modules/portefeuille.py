@@ -127,7 +127,8 @@ class Portefeuille:
         positie,
         aantal: float,
         koers: float,
-        registreer: bool = True
+        registreer: bool = True,
+        reden: str = ""
     ) -> None:
         """
         Koopt een positie en boekt de benodigde cash af.
@@ -204,7 +205,9 @@ class Portefeuille:
                 turbo_soort=turbo_soort,
                 stoploss=stoploss,
                 hefboom=hefboom,
-                onderliggende_koers=onderliggende_koers
+                onderliggende_koers=onderliggende_koers,
+                reden=reden,
+                gemiddelde_aankoopkoers=koers
             )
 
             self.transactieregister.voeg_toe(
@@ -227,7 +230,8 @@ class Portefeuille:
         ticker: str,
         aantal: float,
         koers: float,
-        registreer: bool = True
+        registreer: bool = True,
+        reden: str = ""
     ) -> None:
         """
         Verkoopt een aantal stuks van een bestaande positie
@@ -259,6 +263,27 @@ class Portefeuille:
             )
 
         opbrengst = aantal * koers
+
+        gemiddelde_aankoopkoers = (
+            positie.gemiddelde_koers
+        )
+
+        resultaat = (
+            koers - gemiddelde_aankoopkoers
+        ) * aantal
+
+        if gemiddelde_aankoopkoers > 0:
+
+            resultaat_procent = (
+                (
+                    koers - gemiddelde_aankoopkoers
+                )
+                / gemiddelde_aankoopkoers
+            ) * 100
+
+        else:
+
+            resultaat_procent = 0.0
 
         positie.verkoop(
             aantal
@@ -293,7 +318,11 @@ class Portefeuille:
                 producttype=producttype,
                 turbo_soort=turbo_soort,
                 stoploss=stoploss,
-                hefboom=hefboom
+                hefboom=hefboom,
+                reden=reden,
+                gemiddelde_aankoopkoers=gemiddelde_aankoopkoers,
+                resultaat=resultaat,
+                resultaat_procent=resultaat_procent
             )
 
             self.transactieregister.voeg_toe(
@@ -342,6 +371,14 @@ class Portefeuille:
 
         aantal = positie.aantal
 
+        gemiddelde_aankoopkoers = (
+            positie.gemiddelde_koers
+        )
+
+        resultaat = -(
+            gemiddelde_aankoopkoers * aantal
+        )
+
         transactie = Transactie(
             soort="STOPLOSS",
             ticker=positie.ticker,
@@ -352,7 +389,11 @@ class Portefeuille:
             turbo_soort=positie.soort,
             stoploss=positie.stoploss,
             hefboom=positie.hefboom,
-            onderliggende_koers=positie.onderliggende_koers
+            onderliggende_koers=positie.onderliggende_koers,
+            reden="Stoploss bereikt",
+            gemiddelde_aankoopkoers=gemiddelde_aankoopkoers,
+            resultaat=resultaat,
+            resultaat_procent=-100.0
         )
 
         self.transactieregister.voeg_toe(

@@ -23,7 +23,11 @@ class Transactie:
         turbo_soort: str = "",
         stoploss: float = 0.0,
         hefboom: float = 0.0,
-        onderliggende_koers: float = 0.0
+        onderliggende_koers: float = 0.0,
+        reden: str = "",
+        gemiddelde_aankoopkoers: float = 0.0,
+        resultaat: float = 0.0,
+        resultaat_procent: float = 0.0
     ):
 
         if datum is None:
@@ -45,7 +49,10 @@ class Transactie:
         self.stoploss = stoploss
         self.hefboom = hefboom
         self.onderliggende_koers = onderliggende_koers
-
+        self.reden = reden.strip()
+        self.gemiddelde_aankoopkoers = gemiddelde_aankoopkoers
+        self.resultaat = resultaat
+        self.resultaat_procent = resultaat_procent
         
     def __str__(self) -> str:
 

@@ -90,16 +90,18 @@ class BeursSimulator:
         self,
         positie,
         aantal: float,
-        koers: float
+        koers: float,
+        reden: str = ""
     ) -> None:
 
-            self.portefeuille.koop(
-                positie=positie,
-                aantal=aantal,
-                koers=koers
-            )
+        self.portefeuille.koop(
+            positie=positie,
+            aantal=aantal,
+            koers=koers,
+            reden=reden
+        )
 
-            self.bewaar_historiek()
+        self.bewaar_historiek()
 
     # ==================================================
     # VERKOPEN
@@ -109,15 +111,19 @@ class BeursSimulator:
         self,
         ticker: str,
         aantal: float,
-        koers: float
+        koers: float,
+        reden: str = ""
     ) -> None:
 
         self.portefeuille.verkoop(
             ticker=ticker,
             aantal=aantal,
-            koers=koers
+            koers=koers,
+            reden=reden
         )
+
         self.bewaar_historiek()
+      
 
     def stoploss_turbo(
         self,
@@ -130,31 +136,10 @@ class BeursSimulator:
 
         self.bewaar_historiek()
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         
-# ==================================================
-# KOERS BIJWERKEN
-# ==================================================
+    # ==================================================
+    # KOERS BIJWERKEN
+    # ==================================================
 
     def update_koers(
         self,
@@ -347,30 +332,34 @@ class BeursSimulator:
             self.portefeuille.totaal_rendement()
         )
 
-    def toon_transacties(self):
-    
-                self.transactieregister.print_overzicht()
-    
-            # ==================================================
-            # TRANSACTIES TONEN
-            # ==================================================
-    
-    def toon_transacties(self):
-        
-            self.transactieregister.print_overzicht()
-        
-                # ==================================================
-                # BEWAREN
-                # ==================================================
-        
+    # ==================================================
+    # TRANSACTIES TONEN
+    # ==================================================
+
+    def toon_transacties(self) -> None:
+
+        self.transactieregister.print_overzicht()
+
+    # ==================================================
+    # HANDELSLOGBOEK TURBO'S
+    # ==================================================
+
+    def toon_turbo_logboek(self) -> None:
+
+        self.transactieregister.print_turbo_logboek()
+
+    # ==================================================
+    # TRANSACTIES BEWAREN
+    # ==================================================
+
     def bewaar_transacties(
-                    self,
-                    bestandsnaam: str = "transacties.csv"
-                ) -> None:
-        
-                    self.transactieregister.export_csv(
-                        bestandsnaam
-                    )           
+        self,
+        bestandsnaam: str = "transacties.csv"
+    ) -> None:
+
+        self.transactieregister.export_csv(
+            bestandsnaam
+        )       
     
 
     # ==================================================

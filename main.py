@@ -27,6 +27,7 @@ def toon_menu() -> None:
     print("14 - Turbo kopen")
     print("15 - Turbo verkopen")
     print("16 - Onderliggende koers Turbo wijzigen")
+    print("17 - Handelslogboek Turbo's")
     print("0 - Stoppen")
 
 def main() -> None:
@@ -165,6 +166,18 @@ def main() -> None:
                 continue
 
             bedrag = aantal * koers
+
+            reden = input(
+                "Reden van aankoop : "
+            ).strip()
+
+            if not reden:
+
+                print("")
+                print(
+                    "Fout: reden van aankoop mag niet leeg zijn."
+                )
+                continue
 
             if bedrag > simulator.portefeuille.cash:
 
@@ -662,6 +675,18 @@ def main() -> None:
                 )
                 continue
 
+            reden = input(
+                "Reden van aankoop : "
+            ).strip()
+
+            if not reden:
+
+                print("")
+                print(
+                    "Fout: reden van aankoop mag niet leeg zijn."
+                )
+                continue
+
             bedrag = aantal * koers
 
             if bedrag > simulator.portefeuille.cash:
@@ -695,6 +720,7 @@ def main() -> None:
             print(f"Aantal               : {aantal:.2f}")
             print(f"Turbo koers          : €{koers:.2f}")
             print(f"Totaalbedrag         : €{bedrag:.2f}")
+            print(f"Reden                : {reden}")
 
             try:
 
@@ -741,7 +767,8 @@ def main() -> None:
                 simulator.koop(
                     positie=turbo,
                     aantal=aantal,
-                    koers=koers
+                    koers=koers,
+                    reden=reden
                 )
 
                 simulator.bewaar_transacties()
@@ -848,6 +875,18 @@ def main() -> None:
                 )
                 continue
 
+            reden = input(
+                "Reden van verkoop : "
+            ).strip()
+
+            if not reden:
+
+                print("")
+                print(
+                    "Fout: reden van verkoop mag niet leeg zijn."
+                )
+                continue
+
             opbrengst = aantal * koers
 
             print("")
@@ -860,6 +899,7 @@ def main() -> None:
             print(f"Aantal       : {aantal:.2f}")
             print(f"Koers        : €{koers:.2f}")
             print(f"Opbrengst    : €{opbrengst:.2f}")
+            print(f"Reden        : {reden}")
             print("")
 
             bevestiging = input(
@@ -877,7 +917,8 @@ def main() -> None:
                 simulator.verkoop(
                     ticker=ticker,
                     aantal=aantal,
-                    koers=koers
+                    koers=koers,
+                    reden=reden
                 )
 
                 simulator.bewaar_transacties()
@@ -1003,8 +1044,18 @@ def main() -> None:
 
                 print("")
                 print(
-                    "WAARSCHUWING: STOPLOSS DICHTBIJ!"
+                        "WAARSCHUWING: STOPLOSS DICHTBIJ!"
+
                 )
+        ##################################
+        # Keuze 17
+        # HANDELSLOGBOEK TURBO'S
+        ##################################
+
+        elif keuze == "17":
+
+            simulator.toon_turbo_logboek()
+
 
        ##################################
         # Keuze 0
